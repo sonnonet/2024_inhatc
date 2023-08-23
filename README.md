@@ -36,6 +36,17 @@ sudo service influxdb status
 
 ### InfluxDB2 web setting
   - localhost:8086 접속
- <img width="" height="" src="./catpure/influxdb_1.png"></img>
+  - GET STARTED
+
+ <img width="400" height="500" src="./capture/influxdb_1.png"></img>
+
+  - Setup Initial User
+  - (pi , raspberry)
+  - Organization Name (study)
+  - Bucket Name (DatabaseName)
+    - test
+
+   <img width="500" height="600" src="./capture/influxdb_2.png"></img>
+
 
 
