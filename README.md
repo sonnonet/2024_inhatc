@@ -34,6 +34,8 @@ sudo service influxdb start
 sudo service influxdb status
 ```
 
-### InfluxDB2 setting
+### InfluxDB2 web setting
+  - localhost:8086 접속
+ <img width="" height="" src="./catpure/influxdb_1.png"></img>
 
 
