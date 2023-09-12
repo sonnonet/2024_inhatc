@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import time
 import RPi.GPIO as GPIO
@@ -14,7 +14,7 @@ def interrupt_fired(channel):
     data = [{
         'measurement' : 'pir',        
         'tags':{
-            'inhatc' : '2000',
+            'VisionUni' : '2410',
         },
         'fields':{
             'pir' : a,
@@ -24,16 +24,16 @@ def interrupt_fired(channel):
     try:
         client = influxdb('localhost',8086,'root','root','pir')
     except Exception as e:
-        print "Exception" + str(e)
+        print("Exception" + str(e))
     if client is not None:
         try:
             client.write_points(data)
         except Exception as e:
-            print "Exception write " + str(e)
+            print("Exception write " + str(e))
         finally:
             client.close()
     print(a)
-GPIO.add_event_detect(4, GPIO.FALLING, callback=interrupt_fired)
+GPIO.add_event_detect(14, GPIO.FALLING, callback=interrupt_fired)
 
 while(True):
     time.sleep(1)
@@ -41,7 +41,7 @@ while(True):
     data = [{
         'measurement' : 'pir',        
         'tags':{
-            'inhatc' : '2000',
+            'VisionUni' : '2410',
         },
         'fields':{
             'pir' : a,
@@ -51,14 +51,12 @@ while(True):
     try:
         client = influxdb('localhost',8086,'root','root','pir')
     except Exception as e:
-        print "Exception" + str(e)
+        print ("Exception" + str(e))
     if client is not None:
         try:
             client.write_points(data)
         except Exception as e:
-            print "Exception write " + str(e)
+            print("Exception write " + str(e))
         finally:
             client.close()
     print("running influxdb OK")
-
-
