@@ -6,7 +6,7 @@ import requests, json
 from influxdb import InfluxDBClient as influxdb
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.IN)
+GPIO.setup(14, GPIO.IN)
 
 def interrupt_fired(channel):
     print("interrupt Fired")
@@ -14,7 +14,7 @@ def interrupt_fired(channel):
     data = [{
         'measurement' : 'pir',        
         'tags':{
-            'VisionUni' : '2410',
+            'inhatc' : '2000',
         },
         'fields':{
             'pir' : a,
@@ -41,7 +41,7 @@ while(True):
     data = [{
         'measurement' : 'pir',        
         'tags':{
-            'VisionUni' : '2410',
+            'inhatc' : '2000',
         },
         'fields':{
             'pir' : a,
