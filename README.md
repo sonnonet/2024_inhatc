@@ -28,6 +28,11 @@ echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https
 ```
 sudo apt-get update && sudo apt-get install influxdb2 -y
 ```
+  - 에러) influxdb2 패키지 찾을수 없습니다.
+      - influxdb 1으로 설치
+```
+sudo apt-get install influxdb -y
+```
   - InfluxDB as a background service on startup
 ```
 sudo service influxdb start
