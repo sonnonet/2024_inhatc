@@ -24,15 +24,27 @@ wget -q https://repos.influxdata.com/influxdata-archive_compat.key
 echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c influxdata-archive_compat.key' | sha256sum -c && cat influxdata-archive_compat.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg > /dev/null
 echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/debian stable main' | sudo tee /etc/apt/sources.list.d/influxdata.list
 ```
-  - Packages are up to date && install Influxdb2
+  - Packages are up to date && install Influxdb
+    
+## InfluxDB 데이터베이스 만들기
+
 ```
-sudo apt-get update && sudo apt-get install influxdb2 -y
+$ influx
+
+>create database <데이터베이스이름>
+확인 : show databases 
 ```
-  - 에러) influxdb2 패키지 찾을수 없습니다.
+<strike>
+  ```
+ sudo apt-get update && sudo apt-get install influxdb2 -y
+
+   에러) influxdb2 패키지 찾을수 없습니다.
       - influxdb 1으로 설치
-```
+
 sudo apt-get install influxdb -y
 ```
+
+
   - InfluxDB as a background service on startup
 ```
 sudo service influxdb start
@@ -56,6 +68,7 @@ sudo service influxdb status
 
    <img width="500" height="600" src="./capture/influxdb_2.png"></img>
 
+</strike>
 # Grafana Installation
 
 ## 1. Repository의 GPG key를 더하기
