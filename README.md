@@ -34,7 +34,6 @@ $ influx
 >create database <데이터베이스이름>
 확인 : show databases 
 ```
-<strike>
   ```
  sudo apt-get update && sudo apt-get install influxdb2 -y
 
