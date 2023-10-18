@@ -1,5 +1,5 @@
 int vo = A0;
-int v_led = 2;
+int v_led = 12;
 
 float vo_value=0;
 float voltage = 0;
@@ -7,12 +7,12 @@ float dustDensity = 0;
 
 void setup(){
   Serial.begin(9600);
-  pinMode(2, OUTPUT);
-  pinMode(A0, INPUT);
+  pinMode(v_led, OUTPUT);
+  pinMode(vo, INPUT);
 }
 
 void loop(){
-  digitalWrite(2, LOW);
+  digitalWrite(v_led, LOW);
   delayMicroseconds(280);
   vo_value = analogRead(A0);
   delayMicroseconds(40);
