@@ -29,16 +29,6 @@ echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https
  sudo apt-get update && sudo apt-get install influxdb -y
 
 ```
-    
-## InfluxDB 데이터베이스 만들기
-
-```
-$ influx
-
->create database <데이터베이스이름>
-확인 : show databases 
-```
-
   - InfluxDB as a background service on startup
 ```
 sudo service influxdb start
@@ -46,6 +36,15 @@ sudo service influxdb start
   - InfluxDB is status (service)
 ```
 sudo service influxdb status
+```
+  
+## InfluxDB 데이터베이스 만들기
+
+```
+$ influx
+
+>create database <데이터베이스이름>
+확인 : show databases 
 ```
 
 # Grafana Installation
