@@ -79,6 +79,10 @@ pip install influxdb
 ```
 
 ## PI 카메라 연결
+  - Legacy Camera disable
+```
+  libcamera-hello -t 0
+```
   - Error
 ```
 libEGL warning : DRI2: failed to authenticate
