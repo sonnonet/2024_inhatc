@@ -83,11 +83,19 @@ pip install influxdb
 ```
   libcamera-hello -t 0
 ```
+  - Python Lib 설치
+```
+  pip install picamera
+```
   - Error
 ```
 libEGL warning : DRI2: failed to authenticate
 Made X/EGL preview window
 [1773] INFO Camera camera_manager.cpp:297 libcamera v0.0.5+83-bde9b04f
 ERROR: *** no cameras available ***
+```
+  - 참고
+```
+  https://github.com/raspberrypi/picamera2/blob/main/examples/capture_png.py
 ```
 
