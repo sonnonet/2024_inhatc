@@ -1,8 +1,6 @@
 # 2023_inhatc
 2023 년 3학년 2학기 (A,C반)
 
-~~## 2023-09-05 라즈베리파이 실습 못함~~
-~~- A반 신수민, 조광연, 이재윤, 안진성~~
 
 ## 라즈베리파이 초기 설정
 ```
@@ -74,5 +72,18 @@ sudo service grafana-server start
 pip install influxdb
 ```
 
+# Camera && TelegramBot
+```
+  pip install python-telegram-bot --upgrade
+  git clone https://github.com/python-telegram-bot/python-telegram-bot --recurisive
+```
 
+## PI 카메라 연결
+  - Error
+```
+libEGL warning : DRI2: failed to authenticate
+Made X/EGL preview window
+[1773] INFO Camera camera_manager.cpp:297 libcamera v0.0.5+83-bde9b04f
+ERROR: *** no cameras available ***
+```
 
