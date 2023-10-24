@@ -85,7 +85,7 @@ pip install influxdb
 ```
   - Python Lib 설치
 ```
-  pip install picamera
+  pip install picamera2
 ```
   - Error
 ```
