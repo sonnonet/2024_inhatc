@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-# write by sonnonet 1.2Ver
+# write by sonnonet 1.5Ver
+# 2023-12-05
 # CO2 Rev 2.4
 # THL Rev 1.6 Extenstion
 # PH Rev 1.0 
-# Serial to Mysql 
+# Serial to Print
 
 # Data Format
 # CO2  Data0
@@ -13,14 +14,8 @@ import sys
 import tos
 import datetime
 import threading
-import pymysql
-
 
 AM_OSCILLOSCOPE = 0x93
-
-conn = pymysql.connect(host='125.7.128.42', user='root', password='fxoo0880', db='test',charset='utf8')
-
-sql = ""
 
 class OscilloscopeMsg(tos.Packet):
     def __init__(self, packet = None):
@@ -30,8 +25,8 @@ class OscilloscopeMsg(tos.Packet):
                              ('type', 'int', 2),
                              ('Data0', 'int', 2),
                              ('Data1', 'int', 2),
-                             ('Data2', 'int', 1),
-                             ('Data3', 'int', 1),
+                             ('Data2', 'int', 2),
+                             ('Data3', 'int', 2),
                              ('Data4', 'int', 2),
                              ],
                             packet)
@@ -41,16 +36,10 @@ if '-h' in sys.argv:
 
 am = tos.AM()
 
-#def pbrNum_return(x):
-#	return {100:5,
-#		101:6,
-#		102:7,
-#		}.get(x,0) 
-
 while True:
     p = am.read()
     msg = OscilloscopeMsg(p.data)
-    print p
+	
 ####### CO2 Logic ############
     if msg.type == 1:
 #	pbr_Num = pbrNum_return(msg.srcID)
@@ -70,23 +59,13 @@ while True:
         print "ID:",msg.srcID, "seqNo:",msg.seqNo, "CO2:",CO2
 ####### THL Logic ############
     if msg.type == 2:
-        battery = msg.Data4
+        battery = msg.Data3
  #       battery = 0
 
-        Illumi = int(msg.Data2)+ int(msg.Data3*256) 
-        Illumi = Illumi 
+        Illumi = int(msg.Data2)
         humi = -2.0468 + (0.0367*msg.Data1) + (-1.5955*0.000001)*msg.Data1*msg.Data1
         temp = -(39.6) + (msg.Data0 * 0.01)
-        try:
-            with conn.cursor() as curs:
-				Now = datetime.datetime.now()
-				sql = """insert into JB_Sensor_THL(NODE_ID,SEQ,TEMPERATURE,HUMIDITY,ILLUMINATION,REGDATE) \
-                                    values(%s, %s, %s, %s, %s, %s)"""
-				curs.execute(sql,(msg.srcID,msg.seqNo,temp,humi,Illumi,Now))
-				conn.commit()
-        except all,e:
-	    print e.args
-	    conn.close()
+	    
         print "id:" , msg.srcID, " Count : ", msg.seqNo, \
                 "Temperature: ",temp, "Humidity: ",humi, "Illumination: ",Illumi, "Battery : ", battery
 
