@@ -42,7 +42,7 @@ am = tos.AM()
 while True:
     p = am.read()
     msg = OscilloscopeMsg(p.data)
-    print(p)
+    #print(p)
 	
 ####### THL Logic ############
     if msg.type == 2:
