@@ -71,6 +71,10 @@ sudo service grafana-server start
 ```
 pip install influxdb
 ```
+  - new version RPI4
+```
+  sudo apt install python3-influxdb
+```
 
 # Camera && TelegramBot
 ```
