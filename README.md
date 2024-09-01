@@ -1,5 +1,5 @@
-# 2023_inhatc
-2023 년 3학년 2학기 (A,C반)
+# 2024_inhatc
+2024 년 3학년 2학기 (A,C반)
 
 
 ## 라즈베리파이 초기 설정
@@ -47,25 +47,26 @@ $ influx
 
 # Grafana Installation
 
-## 1. Repository의 GPG key를 더하기
+## 1. Install the prerequisite packages
 ```
-wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-```
-
-## 2. Repository를 더하기
-```
-echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+sudo apt-get install -y apt-transport-https software-properties-common wget
 ```
 
-## 3. 프로그램 설치
+## 2. Import the GPG key:
 ```
-sudo apt update
-sudo apt install grafana
+sudo mkdir -p /etc/apt/keyrings/
+wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
 ```
 
-## 4. 프로그램 실행
+## 3. To add a repository for stable releases, run the following command:
 ```
-sudo service grafana-server start
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+```
+
+## 4. Run the following command to update the list of available packages:
+```
+sudo apt-get update && sudo apt-get install grafana -y
+
 ```
 ## influxdb import with python
 ```
