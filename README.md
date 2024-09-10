@@ -72,9 +72,9 @@ sudo apt-get update && sudo apt-get install grafana -y
 ```
 pip install influxdb
 ```
-  - new version RPI4
+  - hint: See PEP 668 for the detailed specification.
 ```
-  sudo apt install python3-influxdb
+  sudo rm /usr/lib/python3.11/EXTERNALLY-MANAGED
 ```
 
 # Camera && TelegramBot
