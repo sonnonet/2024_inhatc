@@ -80,7 +80,8 @@ pip install influxdb
 # Camera && TelegramBot
 ```
   pip install python-telegram-bot --upgrade
-  git clone https://github.com/python-telegram-bot/python-telegram-bot 
+  git clone https://github.com/python-telegram-bot/python-telegram-bot
+  pip install python-telegram-bot[job-queue] --pre
 ```
 
 ## PI 카메라 연결
