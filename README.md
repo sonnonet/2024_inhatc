@@ -77,12 +77,14 @@ pip install influxdb
   sudo rm /usr/lib/python3.11/EXTERNALLY-MANAGED
 ```
 
-# Camera && TelegramBot
+# TelegramBot
 ```
   pip install python-telegram-bot --upgrade
   git clone https://github.com/python-telegram-bot/python-telegram-bot
   pip install python-telegram-bot[job-queue] --pre
 ```
+## TelegramBot Docs
+  - https://docs.python-telegram-bot.org/en/stable/telegram.ext.jobqueue.html
 
 ## PI 카메라 연결
   - Legacy Camera disable
