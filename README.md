@@ -68,6 +68,10 @@ echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stab
 sudo apt-get update && sudo apt-get install grafana -y
 
 ```
+## 5. Run the following command to server start
+```
+sudo systemctl start grafana-server
+```
 ## influxdb import with python
 ```
 pip install influxdb
