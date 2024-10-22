@@ -42,3 +42,11 @@ sudo apt-get install liblapack-dev gfortran libhdf5-dev
 sudo apt-get install libprotobuf-dev libgoogle-glog-dev libgflags-dev
 sudo apt-get install protobuf-compiler
 ```
+## Cleaning
+```
+$ sudo vim /sbin/dphys-swapfile
+# set CONF_MAXSWAP=2048 with the vim text editor
+$ sudo nano /etc/dphys-swapfile
+# set CONF_SWAPSIZE=200 with the vim text editor
+$ sudo reboot
+```
