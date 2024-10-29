@@ -18,9 +18,9 @@ $ free -m
 ```
 ## OpenCV 4.10.0
 ```
-$ wget https://github.com/Qengineering/Install-OpenCV-Raspberry-Pi-64-bits/raw/main/OpenCV-4-10-0.sh
-$ sudo chmod 755 ./OpenCV-4-10-0.sh
-$ ./OpenCV-4-10-0.sh
+wget https://github.com/Qengineering/Install-OpenCV-Raspberry-Pi-64-bits/raw/main/OpenCV-4-10-0.sh
+sudo chmod 755 ./OpenCV-4-10-0.sh
+./OpenCV-4-10-0.sh
 ```
 ```
 # check for updates
