@@ -62,4 +62,28 @@ $ sudo make install
 ```
 $ motelist
 ```
-<img src="/temp/1.png">
+<img src="/temp/1.PNG">
+
+### 기본 미들웨어 소스코드 다운
+```
+$ git clone https://github.com/sonnonet/2024_inhatc
+$ cd 2024_inhatc/Zigbee/Oscilloscope/
+```
+  - 실행방법 (mote 연결후)
+```
+python oscilloscope.py serial@/dev/ttyUSB0:115200
+```
+
+## Error 
+```
+attributeerror 'Serial' object has no attribute 'setbaudrate'
+-> sudo vim /usr/local/bin/tos-bsl
+-> :1345 줄로 이동
+-> self.serialport.setBaudrate(baudrate) -> self.serialport.setBaudrate = baudrate (수정)
+```
+```
+attributeerror 'serial' object has no attribute 'Serial'
+-> pip uninstall serial
+-> pip install pyserial
+```
+
