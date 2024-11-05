@@ -62,3 +62,4 @@ $ sudo make install
 ```
 $ motelist
 ```
+<img src="/temp/1.png">
