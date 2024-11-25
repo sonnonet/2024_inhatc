@@ -1,0 +1,114 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION:-alpine}
+    restart: always
+    volumes:
+      - db:/var/lib/postgresql/data:Z
+    env_file:
+      - db.env
+    environment:
+      - PUID=${PUID:-109}
+      - PGID=${PGID:-65534}
+    networks:
+      - proxy-tier
+
+  cache:
+    image: redis:${REDIS_VERSION:-6.2-alpine}
+    restart: always
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    command: redis-server --save 20 1
+    volumes: 
+      - cache:/data
+    networks:
+      - proxy-tier
+
+  app:
+    build:
+      context: .
+      dockerfile: ${APP_DOCKERFILE:-Dockerfile.app}
+    container_name: ${APP_CONTAINER_NAME:-nextcloud}
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html:z
+      - ${NEXTCLOUD_EXTDATA:-/mnt/ad/nextcloud}:/extdata
+      - php-fpm:/usr/local/etc
+      - type: tmpfs
+        target: /tmp:exec
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=cache
+      - PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT:-2048M}
+    env_file:
+      - db.env
+    depends_on:
+      - db
+      - cache
+    devices:
+      - /dev/video10:/dev/video10
+      - /dev/video11:/dev/video11
+      - /dev/video12:/dev/video12
+    networks:
+      - proxy-tier
+
+  cron:
+    build:
+      context: .
+      dockerfile: ${APP_DOCKERFILE:-Dockerfile.app}
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html:z
+      - ${NEXTCLOUD_EXTDATA:-/mnt/ad/nextcloud}:/extdata
+      - php-fpm:/usr/local/etc
+      - type: tmpfs
+        target: /tmp:exec
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - cache
+    devices:
+      - /dev/video10:/dev/video10
+      - /dev/video11:/dev/video11
+      - /dev/video12:/dev/video12
+    environment:
+      - PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT:-2048M}
+    networks:
+      - proxy-tier
+
+  imaginary:
+    image: ${IMAGINARY_IMAGE:-ghcr.io/italypaleale/imaginary:master}
+    container_name: imaginary
+    restart: always
+    ports:
+      - '${IMAGINARY_PORT:-9000}:9000'
+    command: -enable-url-source
+    networks:
+      - proxy-tier
+
+  nginx-proxy:
+    image: nginx:${NGINX_VERSION:-alpine}
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "${NGINX_PORT:-8443}:443"
+    volumes:
+      - sslcerts:/etc/nginx/ssl
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - nextcloud:/var/www/html:z,ro
+    networks:
+      - proxy-tier
+    depends_on:
+      - app
+
+volumes:
+  db:
+  php-fpm:
+  nextcloud:
+  sslcerts:
+  cache:
+    driver: local
+
+networks:
+  proxy-tier:
