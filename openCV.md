@@ -1,4 +1,9 @@
 # rasbperrypi 3b+
+## only programming in python 
+```
+pip install opencv-contrib-python
+sudo apt-get install python3-opencv
+```
 ## install openCV Full
 sudo apt-get install build-essential cmake -y
 
