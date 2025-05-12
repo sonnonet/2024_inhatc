@@ -16,6 +16,29 @@ sudo apt-get install mesa-utils libgl1-mesa-dri libgtkgl2.0-dev libgtkglext1-dev
 
 sudo apt-get install libatlas-base-dev gfortran libeigen3-dev -y
 
+## build
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+        -D CMAKE_INSTALL_PREFIX=/usr/local \
+        -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules \
+        -D ENABLE_NEON=ON \
+        -D WITH_FFMPEG=ON \
+        -D WITH_TBB=ON \
+        -D BUILD_TBB=ON \
+        -D BUILD_TESTS=OFF \
+        -D WITH_EIGEN=OFF \
+        -D WITH_GSTREAMER=OFF \
+        -D WITH_V4L=ON \
+        -D WITH_LIBV4L=ON \
+        -D WITH_VTK=OFF \
+        -D WITH_QT=OFF \
+        -D OPENCV_ENABLE_NONFREE=ON \
+        -D INSTALL_C_EXAMPLES=OFF \
+        -D INSTALL_PYTHON_EXAMPLES=OFF \
+        -D BUILD_NEW_PYTHON_SUPPORT=ON \
+        -D BUILD_opencv_python3=TRUE \
+        -D OPENCV_GENERATE_PKGCONFIG=ON \
+        -D BUILD_EXAMPLES=OFF ..
+
 ## Swap 
 
 # rasbperrypi 5 
