@@ -23,7 +23,7 @@ To use the JobQueue, you must install PTB via
 """
 
 import logging
-from picamera2 import Picamera2, Preview
+import cv2
 import time
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -33,6 +33,23 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
+##EDITING CODE
+def takePhoto():
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    if not cap.isOpened():
+        print("camera open error")
+        return 
+    ret, image=cap.read()
+    if not ret:
+        print("frame read error")
+        return
+    cv2.imshow('CAMERA', image)
+    time.sleep(1)
+    cv2.imwrite("./image.jpg",image)
+    cap.release()
+    cv2.destroyAllWindows()
 
 # Define a few command handlers. These usually take the two arguments update and
 # context.
@@ -40,18 +57,6 @@ logging.basicConfig(
 # since context is an unused local variable.
 # This being an example and not having context present confusing beginners,
 # we decided to have it present as context.
-
-def takePhoto():
-    camera = Picamera2()
-    camera.start_preview(Preview.QTGL)
-
-    preview_config = camera.create_preview_configuration(main={"size":(800,600)})
-    camera.configure(preview_config)
-    camera.start()
-    time.sleep(2)
-    camera.capture_file("../image.jpg")
-    camera.close()
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Sends explanation on how to use the bot."""
     await update.message.reply_text("Hi! Use /set <seconds> to set a timer")
@@ -60,9 +65,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def alarm(context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the alarm message."""
     takePhoto()
-    time.sleep(1)
     job = context.job
-    await context.bot.sendPhoto(job.chat_id, photo=open("../image.jpg","rb"))
+    await context.bot.send_message(job.chat_id, text=f"Beep! {job.data} seconds are over!")
+    await context.bot.sendPhoto(job.chat_id, photo=open("./image.jpg","rb"))
 
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -86,7 +91,7 @@ async def set_timer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             return
 
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_once(alarm, due, chat_id=chat_id, name=str(chat_id), data=due)
+        context.job_queue.run_repeating(alarm, due, chat_id=chat_id, name=str(chat_id), data=due)
 
         text = "Timer successfully set!"
         if job_removed:
@@ -108,7 +113,7 @@ async def unset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token("").build()
+    application = Application.builder().token("1331886552:").build()
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler(["start", "help"], start))
