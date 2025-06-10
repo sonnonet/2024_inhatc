@@ -73,6 +73,10 @@ $ cd 2024_inhatc/Zigbee/Oscilloscope/
 ```
 python oscilloscope.py serial@/dev/ttyUSB0:115200
 ```
+## tos.py 복사
+```
+$ mv ./tos.py /opt/tinyos-2.x/support/sdk/python/tos.py
+```
 
 ## Error 
 ```
