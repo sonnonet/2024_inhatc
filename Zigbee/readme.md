@@ -39,7 +39,7 @@ $ sudo mv libgetenv.so /usr/lib
 ```
 ### NesC 설치
 ```
-$ mv ~/sonnonet/jni/tinyos/nesc-1.3.4.tar.gz ~/
+$ mv ~/jni/tinyos/nesc-1.3.4.tar.gz ~/
 $ tar –xvzf nesc-1.3.4.tar.gz
 $ cd nesc-1.3.4
 $ ./configure --build=aarch64-unknown-linux-gnu
