@@ -44,7 +44,7 @@ import traceback
 
 try: 
     import serial
-except ImportError: 
+except e: 
     print ("Please install PySerial first.")
     sys.exit(1)
 
@@ -81,7 +81,8 @@ def getSource(comm):
     if source[0] == 'serial':
         try:
             return Serial(params[0], int(params[1]), flush=True, debug=debug)
-        except:
+        except Exception as e:
+            print(e)
             print ("ERROR: Unable to initialize a serial connection to", comm)
             raise Exception
     elif source[0] == 'network':
@@ -108,7 +109,7 @@ class Serial:
         self._s = serial.Serial(port, int(baudrate), rtscts=0, timeout=0.5)
         self._s.flushInput()
         if flush:
-            print >>sys.stdout, "Flushing the serial port",
+            print ("Flushing the serial port")
             endtime = time.time() + 1
             while time.time() < endtime:
                 self._s.read()
@@ -338,7 +339,7 @@ class HDLC:
         return output
 
     def _decode(self, v):
-        r = long(0)
+        r = int(0)
         for i in v[::-1]:
             r = (r << 8) + i
         return r
@@ -425,7 +426,7 @@ def printfHook(packet):
         s = "".join([chr(i) for i in packet.data]).strip('\0')
         lines = s.split('\n')
         for line in lines:
-            if line: print("PRINTF:", line)
+            if line: print ("PRINTF:", line)
         packet = None # No further processing for the printf packet
     return packet    
 
@@ -511,7 +512,7 @@ class Packet:
     """
 
     def _decode(self, v):
-        r = long(0)
+        r = int(0)
         for i in v:
             r = (r << 8) + i
         return r
@@ -738,4 +739,3 @@ class ActiveMessage(Packet):
             if isinstance(packet, Packet):
                 self.data = packet.payload()
             self.length = len(self.data)
-
