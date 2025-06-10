@@ -69,14 +69,15 @@ $ motelist
 $ git clone https://github.com/sonnonet/2024_inhatc
 $ cd 2024_inhatc/Zigbee/Oscilloscope/
 ```
-  - 실행방법 (mote 연결후)
-```
-python oscilloscope.py serial@/dev/ttyUSB0:115200
-```
 ## tos.py 복사
 ```
 $ mv ./tos.py /opt/tinyos-2.x/support/sdk/python/tos.py
 ```
+  - 실행방법 (mote 연결후)
+```
+python oscilloscope.py serial@/dev/ttyUSB0:115200
+```
+
 
 ## Error 
 ```
