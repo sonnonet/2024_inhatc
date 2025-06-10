@@ -71,7 +71,7 @@ $ cd 2024_inhatc/Zigbee/Oscilloscope/
 ```
 ## tos.py 복사
 ```
-$ mv ./tos.py /opt/tinyos-2.x/support/sdk/python/tos.py
+$ mv ~/2024_inhatc/Zigbee/tos.py /opt/tinyos-2.x/support/sdk/python/tos.py
 ```
   - 실행방법 (mote 연결후)
 ```
