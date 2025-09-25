@@ -24,7 +24,9 @@ To use the JobQueue, you must install PTB via
 
 import logging
 import cv2
-import time
+import os
+from datetime import datetime
+
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
@@ -33,23 +35,6 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
-##EDITING CODE
-def takePhoto():
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    if not cap.isOpened():
-        print("camera open error")
-        return 
-    ret, image=cap.read()
-    if not ret:
-        print("frame read error")
-        return
-    cv2.imshow('CAMERA', image)
-    time.sleep(1)
-    cv2.imwrite("./image.jpg",image)
-    cap.release()
-    cv2.destroyAllWindows()
 
 # Define a few command handlers. These usually take the two arguments update and
 # context.
@@ -61,13 +46,35 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Sends explanation on how to use the bot."""
     await update.message.reply_text("Hi! Use /set <seconds> to set a timer")
 
+async def test(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Sends explanation on how to use the bot."""
+    await update.message.reply_text("testing")
 
 async def alarm(context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the alarm message."""
-    takePhoto()
     job = context.job
-    await context.bot.send_message(job.chat_id, text=f"Beep! {job.data} seconds are over!")
-    await context.bot.sendPhoto(job.chat_id, photo=open("./image.jpg","rb"))
+    chat_id = job.chat_id
+
+    try:
+        cam = cv2.VideoCapture(0)
+        if not cam.isOpened():
+            await context.bot.send_message(chat_id, text ="can't open camera case 1")
+            return
+        ret, frame = cam.read()
+        cam.release()
+
+        if not ret:
+            await context.bot.send_message(chat_id, text="failed case 2")
+            return
+        filename = f"capture_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+        file_path = os.path.join("./", filename)
+        cv2.imwrite(file_path, frame)
+
+        with open(file_path, "rb") as photo:
+            await context.bot.send_photo(chat_id,photo,caption="done")
+        os.remove(file_path)
+    except Exception as e:
+        await context.bot.send_message(job.chat_id, text=f"{e}")
 
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -91,7 +98,7 @@ async def set_timer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             return
 
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_repeating(alarm, due, chat_id=chat_id, name=str(chat_id), data=due)
+        context.job_queue.run_once(alarm, due, chat_id=chat_id, name=str(chat_id), data=due)
 
         text = "Timer successfully set!"
         if job_removed:
@@ -113,11 +120,12 @@ async def unset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token("1331886552:").build()
+    application = Application.builder().token("").build()
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler(["start", "help"], start))
     application.add_handler(CommandHandler("set", set_timer))
+    application.add_handler(CommandHandler("test", test))
     application.add_handler(CommandHandler("unset", unset))
 
     # Run the bot until the user presses Ctrl-C
