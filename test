@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+### ====== 설정 부분 (필수로 확인할 것) ======
+
+# TI MSP430-GCC 버전 (TI 페이지에서 보는 버전)
+MSP430_GCC_VERSION="9.3.1.2"
+
+# 설치할 위치 (원하면 /opt 로 바꿔도 됨, 그땐 sudo 필요)
+INSTALL_PREFIX="$HOME/ti-msp430-gcc-$MSP430_GCC_VERSION"
+
+# TI에서 받은 "Source" tarball 파일 이름 (실제 파일명으로 수정)
+# 예: MSP430-GCC-OPENSOURCE-9.3.1.2-source.tar.bz2 이런 식일 가능성이 큼
+SRC_TARBALL="$HOME/Downloads/MSP430-GCC-OPENSOURCE-${MSP430_GCC_VERSION}-source.tar.bz2"
+
+# 작업 디렉터리
+BUILD_ROOT="$HOME/build-msp430-gcc-$MSP430_GCC_VERSION"
+
+### ====== 여기부터는 웬만하면 건드릴 필요 없음 ======
+
+echo "[*] 필요한 패키지 설치 (build-essential, texinfo, GMP/MPFR/MPC 등)"
+sudo apt update
+sudo apt install -y \
+  build-essential \
+  texinfo \
+  libgmp-dev \
+  libmpfr-dev \
+  libmpc-dev \
+  flex \
+  bison \
+  wget
+
+echo "[*] 소스 tarball 존재 확인: $SRC_TARBALL"
+if [ ! -f "$SRC_TARBALL" ]; then
+  echo "  -> 소스 파일을 먼저 TI 사이트에서 다운받아서 SRC_TARBALL 경로를 맞춰줘야 함."
+  exit 1
+fi
+
+echo "[*] 빌드 루트 디렉터리 생성: $BUILD_ROOT"
+rm -rf "$BUILD_ROOT"
+mkdir -p "$BUILD_ROOT"
+cd "$BUILD_ROOT"
+
+echo "[*] 소스 압축 해제"
+tar xf "$SRC_TARBALL"
+
+echo "[*] 압축 풀린 디렉터리 찾는 중..."
+# TI 소스 패키지 풀면 보통 상위 디렉터리가 하나 생김 (예: msp430-gcc-9.3.1.2)
+TOPDIR="$(find . -maxdepth 1 -type d ! -path . | head -n 1)"
+if [ -z "$TOPDIR" ]; then
+  echo "  -> 최상위 디렉터리를 못 찾았음. tar 풀린 폴더 이름을 직접 확인해서 스크립트 수정 필요."
+  exit 1
+fi
+echo "  -> TOPDIR = $TOPDIR"
+cd "$TOPDIR"
+
+echo "[*] binutils 빌드 시작"
+mkdir -p build-binutils
+cd build-binutils
+
+# TI 소스 안에서 binutils 디렉터리 이름이 다를 수 있음
+# 보통은 'binutils-gdb' 또는 'binutils' 중 하나임. 실제 디렉터리 이름 보고 아래 경로 맞춰야 함.
+if [ -d "../binutils-gdb" ]; then
+  BINUTILS_SRC="../binutils-gdb"
+elif [ -d "../binutils" ]; then
+  BINUTILS_SRC="../binutils"
+else
+  echo "  -> binutils 소스 디렉터리를 못 찾았음. ../binutils* 디렉터리 이름 확인해서 스크립트 수정 필요."
+  exit 1
+fi
+echo "  -> BINUTILS_SRC = $BINUTILS_SRC"
+
+"$BINUTILS_SRC/configure" \
+  --target=msp430-elf \
+  --prefix="$INSTALL_PREFIX" \
+  --disable-nls \
+  --disable-werror
+
+make -j"$(nproc)"
+make install
+cd ..
+
+echo "[*] gcc (1단계) 빌드 시작"
+mkdir -p build-gcc
+cd build-gcc
+
+# TI 소스 안 gcc 디렉터리 확인
+if [ -d "../gcc" ]; then
+  GCC_SRC="../gcc"
+else
+  echo "  -> gcc 소스 디렉터리(../gcc)를 못 찾았음. 실제 구조 확인 필요."
+  exit 1
+fi
+echo "  -> GCC_SRC = $GCC_SRC"
+
+"$GCC_SRC/configure" \
+  --target=msp430-elf \
+  --prefix="$INSTALL_PREFIX" \
+  --enable-languages=c \
+  --disable-nls \
+  --without-headers \
+  --disable-libssp \
+  --disable-tls
+
+make -j"$(nproc)" all-gcc
+make install-gcc
+cd ..
+
+echo "[*] (선택) msp430 libc / runtime 이 포함되어 있다면 해당 README 보고 추가 빌드 필요할 수 있음."
+echo "    -> TI 소스 패키지 안에 libc 관련 디렉터리(msp430-libc 등)와 README를 확인해봐."
+
+echo "[*] PATH 설정 추가: $INSTALL_PREFIX/bin"
+if ! grep -q "ti-msp430-gcc-$MSP430_GCC_VERSION" "$HOME/.bashrc" 2>/dev/null; then
+  echo "" >> "$HOME/.bashrc"
+  echo "# MSP430-GCC (TI) toolchain $MSP430_GCC_VERSION" >> "$HOME/.bashrc"
+  echo "export PATH=\"$INSTALL_PREFIX/bin:\$PATH\"" >> "$HOME/.bashrc"
+fi
+
+echo "[*] msp430-elf-gcc 가 설치되었는지 확인"
+"$INSTALL_PREFIX/bin/msp430-elf-gcc" --version || {
+  echo "  -> msp430-elf-gcc 실행 실패. 빌드 로그를 위에서 다시 확인해야 함."
+  exit 1
+}
+
+echo "[*] TinyOS가 기대하는 이름(msp430-gcc)으로 심볼릭 링크 생성"
+cd "$INSTALL_PREFIX/bin"
+if [ ! -f msp430-gcc ]; then
+  ln -s msp430-elf-gcc msp430-gcc
+fi
+if [ ! -f msp430-as ]; then
+  ln -s msp430-elf-as msp430-as 2>/dev/null || true
+fi
+if [ ! -f msp430-ld ]; then
+  ln -s msp430-elf-ld msp430-ld 2>/dev/null || true
+fi
+
+echo
+echo "==============================================="
+echo " MSP430-GCC (TI) 설치 완료 (아마도)!"
+echo " 설치 경로: $INSTALL_PREFIX"
+echo " .bashrc 를 새로 읽히거나 (source ~/.bashrc),"
+echo " 새 터미널 열고 나서 아래 명령으로 확인:"
+echo
+echo "   msp430-gcc --version"
+echo
+echo " TinyOS 앱 빌드는 예를 들어 이렇게:"
+echo "   cd /opt/tinyos-2.x/apps/Blink"
+echo "   make telosb"
+echo "==============================================="
