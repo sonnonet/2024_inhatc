@@ -1,4 +1,3 @@
-
 # 도커 설치
 ```
 # Docker의 패키지를 안전하게 설치하려면 Docker의 공식 GPG 키를 받아야 합니다. 이 키는 Docker 패키지가 신뢰할 수 있는 출처에서 온 것임을 보장
@@ -18,4 +17,9 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 
+```
+
+## 최신 버전 설치
+```
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
