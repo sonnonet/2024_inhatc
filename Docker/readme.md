@@ -23,3 +23,8 @@ sudo apt-get update
 ```
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+
+## 테스트
+```
+sudo docker run hello-world
+```
